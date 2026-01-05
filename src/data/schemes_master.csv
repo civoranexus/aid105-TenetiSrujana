@@ -1,0 +1,11 @@
+scheme_id,scheme_name,state,min_income,max_income,category,benefit_amount,deadline,priority_weight
+C001,PM Scholarship Scheme,ALL,0,800000,Student,50000,2026-01-20,9
+C002,Ayushman Bharat Yojana,ALL,0,500000,Healthcare,500000,2026-12-31,10
+C003,PM Ujjwala Yojana,ALL,0,300000,Women,1600,2026-06-30,8
+C004,PM Awas Yojana,ALL,0,600000,Housing,250000,2026-09-30,9
+C005,PM Mudra Loan,ALL,0,1000000,Self-Employed,1000000,2026-03-31,7
+C006,PM Kisan Samman Nidhi,ALL,0,200000,Farmer,6000,2026-02-28,8
+S001,Telangana Kalyana Lakshmi,Telangana,0,200000,Women,100000,2026-01-15,10
+S002,Aasara Pension Scheme,Telangana,0,150000,Senior Citizen,2016,2026-01-25,9
+S003,Telangana Post Matric Scholarship,Telangana,0,200000,Student,25000,2026-01-18,9
+S004,Telangana Housing Scheme,Telangana,0,300000,Housing,300000,2026-04-30,7
