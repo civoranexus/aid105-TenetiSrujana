@@ -6,6 +6,7 @@ from models.scenario_engine import simulate_income_scenarios
 from models.ranking_engine import rank_schemes
 from models.decision_trace_engine import generate_decision_trace
 from models.citizen_explainer import generate_citizen_summary
+from models.life_event_engine import analyze_life_events
 
 
 # ---------------- USER PROFILE ----------------
@@ -16,8 +17,14 @@ user_profile = {
     "category": "Student"
 }
 
+# ---------------- LIFE EVENTS (DAY 6 FEATURE) ----------------
+life_events = [
+    "student_passed_12th",
+    "family_income_reduced"
+]
+
 eligibility_results = []
-enriched_reports = []   # ✅ REQUIRED for ranking
+enriched_reports = []
 
 
 # ---------------- LOAD SCHEME DATA ----------------
@@ -28,7 +35,7 @@ with open("src/data/schemes_master.csv", newline="") as file:
 print("\n🔍 AI Eligibility & Risk Analysis Report\n")
 
 
-# ---------------- ELIGIBILITY + ADVISORY ----------------
+# ---------------- ELIGIBILITY COMPUTATION ----------------
 for scheme in schemes:
     scheme["min_income"] = int(scheme["min_income"])
     scheme["max_income"] = int(scheme["max_income"])
@@ -43,7 +50,7 @@ for scheme in schemes:
     eligibility_results.append(result)
 
 
-# ---------------- DETAILED REPORTS ----------------
+# ---------------- DETAILED AI REPORTS ----------------
 for result in eligibility_results:
     report = generate_recommendation_report(result)
 
@@ -62,7 +69,7 @@ for result in eligibility_results:
     for d in report["required_documents"]:
         print(f" - {d}")
 
-    # ---------------- DAY 5: EXPLAINABLE AI ----------------
+    # -------- Explainable AI --------
     trace = generate_decision_trace(result)
     summary = generate_citizen_summary(report)
 
@@ -73,9 +80,21 @@ for result in eligibility_results:
     print("\n👤 Citizen-Friendly Explanation:")
     print(f" {summary}")
 
+    # -------- LIFE EVENT AWARENESS (🔥 UNIQUE FEATURE) --------
+    life_insights = analyze_life_events(
+        user_profile,
+        life_events,
+        report["scheme"]
+    )
+
+    if life_insights:
+        print("\n🧠 Life-Event Based Insights:")
+        for i in life_insights:
+            print(f" - {i}")
+
     print("=" * 70)
 
-    # ---------------- PREPARE DATA FOR RANKING ----------------
+    # -------- PREPARE FOR RANKING --------
     enriched_reports.append({
         "scheme": report["scheme"],
         "score": report["score"],
@@ -114,3 +133,5 @@ ranked = rank_schemes(enriched_reports)
 
 for idx, r in enumerate(ranked, 1):
     print(f"{idx}. {r['scheme']} (Rank Score: {r['rank_score']})")
+
+
