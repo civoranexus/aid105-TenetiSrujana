@@ -9,6 +9,7 @@ from models.citizen_explainer import generate_citizen_summary
 from models.life_event_engine import analyze_life_events
 from models.readiness_engine import assess_application_readiness
 from models.evaluation_engine import evaluate_ranking
+from models.fairness_engine import audit_fairness   # ✅ DAY 3 FEATURE
 
 
 # ---------------- USER PROFILE ----------------
@@ -111,13 +112,14 @@ for result in eligibility_results:
 
     print("=" * 70)
 
-    # ---------------- PREPARE FOR RANKING ----------------
+    # ---------------- PREPARE FOR RANKING & FAIRNESS ----------------
     enriched_reports.append({
         "scheme": report["scheme"],
         "score": report["score"],
         "priority_weight": result["scheme_data"]["priority_weight"],
         "deadline": result["scheme_data"]["deadline"],
-        "estimated_benefit": result["scheme_data"]["estimated_benefit"]
+        "estimated_benefit": result["scheme_data"]["estimated_benefit"],
+        "category": result["scheme_data"]["category"]   # ✅ REQUIRED FOR FAIRNESS
     })
 
 
@@ -162,3 +164,12 @@ for exp in ranking_explanations:
         f"✔ {exp['better_scheme']} ranked higher than {exp['lower_scheme']} due to: "
         + ", ".join(exp["reasons"])
     )
+
+
+# ---------------- DAY 3: AI FAIRNESS & BIAS AUDIT ----------------
+print("\n⚖️ AI FAIRNESS & BIAS AUDIT\n")
+
+fairness_results = audit_fairness(enriched_reports)
+
+for f in fairness_results:
+    print(f)
