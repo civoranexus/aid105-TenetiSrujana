@@ -9,7 +9,8 @@ from models.citizen_explainer import generate_citizen_summary
 from models.life_event_engine import analyze_life_events
 from models.readiness_engine import assess_application_readiness
 from models.evaluation_engine import evaluate_ranking
-from models.fairness_engine import audit_fairness   # ✅ DAY 3 FEATURE
+from models.fairness_engine import audit_fairness          # ✅ DAY 3
+from models.action_planner import generate_action_plan     # ✅ DAY 4
 
 
 # ---------------- USER PROFILE ----------------
@@ -46,7 +47,6 @@ for scheme in schemes:
     scheme["priority_weight"] = int(scheme["priority_weight"])
 
     result = calculate_eligibility_score(user_profile, scheme)
-
     result["scheme"] = scheme["scheme_name"]
     result["scheme_data"] = scheme
 
@@ -98,6 +98,24 @@ for result in eligibility_results:
     print("AI Advice:")
     print(f" {readiness['advice']}")
 
+    # ---------------- DAY 4: AI APPLICATION ACTION PLANNER ----------------
+    action_plan = generate_action_plan(report, readiness)
+
+    print("\n📅 AI APPLICATION ACTION PLAN")
+
+    if action_plan["today"]:
+        print("TODAY:")
+        for t in action_plan["today"]:
+            print(f" - {t}")
+
+    if action_plan["next"]:
+        print("NEXT:")
+        for n in action_plan["next"]:
+            print(f" - {n}")
+
+    if action_plan["risk"]:
+        print(f"RISK IF DELAYED: {action_plan['risk']}")
+
     # ---------------- LIFE EVENT AWARENESS ----------------
     life_insights = analyze_life_events(
         user_profile,
@@ -119,7 +137,7 @@ for result in eligibility_results:
         "priority_weight": result["scheme_data"]["priority_weight"],
         "deadline": result["scheme_data"]["deadline"],
         "estimated_benefit": result["scheme_data"]["estimated_benefit"],
-        "category": result["scheme_data"]["category"]   # ✅ REQUIRED FOR FAIRNESS
+        "category": result["scheme_data"]["category"]
     })
 
 
