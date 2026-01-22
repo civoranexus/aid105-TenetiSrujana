@@ -11,6 +11,7 @@ from models.readiness_engine import assess_application_readiness
 from models.evaluation_engine import evaluate_ranking
 from models.fairness_engine import audit_fairness          # ✅ DAY 3
 from models.action_planner import generate_action_plan     # ✅ DAY 4
+from models.reminder_engine import generate_reminder       # ✅ DAY 5
 
 
 # ---------------- USER PROFILE ----------------
@@ -98,7 +99,7 @@ for result in eligibility_results:
     print("AI Advice:")
     print(f" {readiness['advice']}")
 
-    # ---------------- DAY 4: AI APPLICATION ACTION PLANNER ----------------
+    # ---------------- DAY 4: AI ACTION PLANNER ----------------
     action_plan = generate_action_plan(report, readiness)
 
     print("\n📅 AI APPLICATION ACTION PLAN")
@@ -115,6 +116,16 @@ for result in eligibility_results:
 
     if action_plan["risk"]:
         print(f"RISK IF DELAYED: {action_plan['risk']}")
+
+    # ---------------- DAY 5: AI REMINDER ENGINE ----------------
+    reminders = generate_reminder(report, readiness)
+
+    if reminders:
+        print("\n🔔 AI REMINDER ALERTS:")
+        for r in reminders:
+            print(f"• Type: {r['type']}")
+            print(f"  When: {r['when']}")
+            print(f"  Message: {r['message']}")
 
     # ---------------- LIFE EVENT AWARENESS ----------------
     life_insights = analyze_life_events(
