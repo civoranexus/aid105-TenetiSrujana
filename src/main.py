@@ -2,13 +2,11 @@ import csv
 
 from models.eligibility_scoring import calculate_eligibility_score
 from models.recommendation_advisor import generate_recommendation_report
-from models.scenario_engine import simulate_income_scenarios
 from models.ranking_engine import rank_schemes
 from models.decision_trace_engine import generate_decision_trace
 from models.citizen_explainer import generate_citizen_summary
 from models.life_event_engine import analyze_life_events
 from models.readiness_engine import assess_application_readiness
-from models.evaluation_engine import evaluate_ranking
 from models.fairness_engine import audit_fairness
 from models.action_planner import generate_action_plan
 from models.reminder_engine import generate_reminder
@@ -32,6 +30,7 @@ life_events = [
 
 eligibility_results = []
 enriched_reports = []
+last_report = None
 
 
 # ---------------- LOAD SCHEME DATA ----------------
@@ -59,6 +58,7 @@ for scheme in schemes:
 # ---------------- DETAILED AI REPORTS ----------------
 for result in eligibility_results:
     report = generate_recommendation_report(result)
+    last_report = report  # save for impact summary
 
     print(f"🏷️ Scheme: {report['scheme']}")
     print(f"📊 Score: {report['score']} | Confidence: {report['confidence']}")
@@ -75,7 +75,7 @@ for result in eligibility_results:
     for d in report["required_documents"]:
         print(f" - {d}")
 
-    # ---- Explainable AI ----
+    # ---------------- Explainable AI ----------------
     trace = generate_decision_trace(result)
     summary = generate_citizen_summary(report)
 
@@ -86,7 +86,7 @@ for result in eligibility_results:
     print("\n👤 Citizen-Friendly Explanation:")
     print(f" {summary}")
 
-    # ---- Application Readiness ----
+    # ---------------- Application Readiness ----------------
     readiness = assess_application_readiness(report["required_documents"])
 
     print("\n📋 Application Readiness Check:")
@@ -101,21 +101,21 @@ for result in eligibility_results:
     print("AI Advice:")
     print(f" {readiness['advice']}")
 
-    # ---- Action Planner ----
+    # ---------------- Action Planner ----------------
     action_plan = generate_action_plan(report, readiness)
 
     print("\n📅 AI APPLICATION ACTION PLAN")
-    for t in action_plan["today"]:
+    for t in action_plan.get("today", []):
         print(f" - {t}")
-    for n in action_plan["next"]:
+    for n in action_plan.get("next", []):
         print(f" - {n}")
 
-    # ---- Reminder Engine ----
+    # ---------------- Reminder Engine ----------------
     reminders = generate_reminder(report, readiness)
     for r in reminders:
         print(f"🔔 {r['message']}")
 
-    # ---- Life Events ----
+    # ---------------- Life Events ----------------
     insights = analyze_life_events(user_profile, life_events, report["scheme"])
     for i in insights:
         print(f"🧠 {i}")
@@ -147,10 +147,11 @@ for f in audit_fairness(enriched_reports):
 
 
 # ---------------- CITIZEN IMPACT SUMMARY ----------------
-impact = generate_impact_summary(report)
-print("\n🎯 Citizen Impact Summary")
-print(f"Financial Impact: {impact['financial_impact']}")
-print(f"Outcome: {impact['outcome']}")
+if last_report:
+    impact = generate_impact_summary(last_report)
+    print("\n🎯 Citizen Impact Summary")
+    print(f"Financial Impact: {impact['financial_impact']}")
+    print(f"Outcome: {impact['outcome']}")
 
 
 # ---------------- DAY 7: POLICY CHANGE SIMULATOR ----------------
@@ -168,5 +169,4 @@ for scheme in schemes:
     print(f"🏷️ Scheme: {result['scheme']}")
     for i in result["impact_analysis"]:
         print(f" - {i}")
-
     print("-" * 50)
