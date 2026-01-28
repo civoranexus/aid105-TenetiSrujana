@@ -12,6 +12,7 @@ from models.action_planner import generate_action_plan
 from models.reminder_engine import generate_reminder
 from models.impact_engine import generate_impact_summary
 from models.policy_simulator import simulate_policy_change
+from models.summary_engine import generate_overall_summary
 
 
 # ---------------- USER PROFILE ----------------
@@ -170,3 +171,18 @@ for scheme in schemes:
     for i in result["impact_analysis"]:
         print(f" - {i}")
     print("-" * 50)
+
+# ----------------  OVERALL CITIZEN GUIDANCE SUMMARY ----------------
+summary = generate_overall_summary(enriched_reports)
+
+print("\n🧾 AI OVERALL CITIZEN GUIDANCE SUMMARY\n")
+print(f"Total Schemes Analyzed: {summary['total_schemes']}")
+print(f"Eligible / Actionable Schemes: {summary['actionable']}")
+print(f"Closed / Expired Schemes: {summary['closed']}")
+
+print("\nTop Immediate Actions:")
+for a in summary["actions"]:
+    print(f" - {a}")
+
+print("\nBiggest Risk If Delayed:")
+print(f" {summary['risk']}")
