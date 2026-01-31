@@ -98,6 +98,80 @@
 
 ---
 
+## 🧠 SchemeAssist – AI Government Scheme Recommendation System (AID105)
+
+SchemeAssist is an AI-driven decision support system designed to help citizens
+identify, prioritize, and understand eligible government welfare schemes.
+
+Instead of static listings, the system analyzes:
+- Citizen profile (income, state, category)
+- Scheme eligibility rules
+- Deadlines and urgency
+- Potential financial impact
+
+The output is a **clear, explainable, and prioritized recommendation** that guides
+citizens on *what to apply for, when, and why*.
+
+---
+
+## 🔍 AI Decision Pipeline
+
+The SchemeAssist AI follows a transparent, multi-stage decision process:
+
+1. **User Profiling**
+   - Income, state, category, and needs
+
+2. **Eligibility Scoring Engine**
+   - Rule-based validation with explainable reasons
+
+3. **Deadline & Risk Analysis**
+   - Identifies urgency and potential loss due to missed deadlines
+
+4. **Scenario Simulation**
+   - Tests eligibility across income variations (what-if analysis)
+
+5. **Explainable AI Layer**
+   - Generates human-readable decision traces
+
+6. **Final Priority Ranking**
+   - Ranks schemes based on eligibility, urgency, and benefit impact
+
+---
+
+## 🌍 Real-World Use Case
+
+A student or low-income citizen often misses high-value schemes due to:
+- Confusing eligibility rules
+- Lack of awareness about deadlines
+- No clarity on application priority
+
+SchemeAssist solves this by:
+- Highlighting urgent schemes first
+- Explaining eligibility in simple language
+- Warning users about benefit loss risks
+- Helping plan applications with limited resources
+
+This makes welfare access **faster, clearer, and more equitable**.
+
+---
+
+## ⭐ Why This Project Stands Out
+
+- ✔ Explainable AI (no black-box decisions)
+- ✔ Deadline-aware risk modeling
+- ✔ Citizen-friendly explanations
+- ✔ Scenario-based eligibility simulation
+- ✔ Policy-aligned prioritization logic
+
+The focus is not just accuracy, but **trust, transparency, and usability**.
+
+---
+
+## ▶️ How to Run
+python src/main.py
+
+---
+
 ## 🏢 About Civora Nexus
 
 **Civora Nexus Pvt. Ltd.** is a technology company empowering communities through innovative civic and healthcare technology solutions.
@@ -119,8 +193,6 @@
 - 🔐 [Certificate Verification](https://internship.civoranexus.com)
 - 📄 [Privacy Policy](https://civoranexus.com/privacy-policy)
 - 📜 [Terms of Service](https://civoranexus.com/terms-and-conditions)
-
-
 
 <p align="center">
   <strong>© 2025 Civora Nexus Pvt. Ltd. All rights reserved.</strong>
