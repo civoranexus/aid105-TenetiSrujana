@@ -13,6 +13,7 @@ from models.reminder_engine import generate_reminder
 from models.impact_engine import generate_impact_summary
 from models.policy_simulator import simulate_policy_change
 from models.summary_engine import generate_overall_summary
+from models.comparison_engine import compare_schemes
 
 
 # ---------------- USER PROFILE ----------------
@@ -186,3 +187,14 @@ for a in summary["actions"]:
 
 print("\nBiggest Risk If Delayed:")
 print(f" {summary['risk']}")
+
+print("\n📊 AI SCHEME COMPARISON INSIGHTS\n")
+
+top_schemes = ranked[:3]   # compare top 3 schemes
+comparisons = compare_schemes(top_schemes)
+
+for c in comparisons:
+    print(
+        f"✔ {c['better_scheme']} is better than {c['lower_scheme']} due to: "
+        + ", ".join(c["reasons"])
+    )

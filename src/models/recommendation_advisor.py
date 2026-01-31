@@ -1,32 +1,25 @@
-from models.deadline_risk_engine import analyze_deadline_risk
+from src.models.deadline_risk_engine import analyze_deadline_risk
 
 
-def generate_recommendation_report(scheme_result):
-    score = scheme_result["score"]
-    confidence = scheme_result["confidence"]
-    scheme = scheme_result["scheme"]
-    reasons = scheme_result["reasons"]
-    scheme_data = scheme_result["scheme_data"]
+def generate_recommendation_report(result):
+    score = result["score"]
+    confidence = result["confidence"]
+    scheme = result["scheme"]
+    reasons = result["reasons"]
+    scheme_data = result["scheme_data"]
 
-    # ---------------- Deadline Risk Analysis ----------------
     deadline_risk = analyze_deadline_risk(scheme_data)
 
-    # ---------------- Priority Decision Logic ----------------
-    if deadline_risk["status"] == "EXPIRED":
+    if deadline_risk["urgency"] == "EXPIRED":
         priority = "CLOSED"
-    elif score >= 80 or deadline_risk["urgency"] == "EXTREME":
+    elif score >= 80:
         priority = "APPLY IMMEDIATELY"
     elif score >= 50:
         priority = "PREPARE DOCUMENTS"
     else:
-        priority = "NOT RECOMMENDED CURRENTLY"
+        priority = "NOT RECOMMENDED"
 
-    # ---------------- Required Documents ----------------
-    documents = [
-        "Aadhaar Card",
-        "Income Certificate",
-        "Residence Proof"
-    ]
+    documents = ["Aadhaar Card", "Income Certificate", "Residence Proof"]
 
     if "Scholarship" in scheme:
         documents.append("Bonafide / Study Certificate")
@@ -34,7 +27,6 @@ def generate_recommendation_report(scheme_result):
     if "Housing" in scheme:
         documents.append("Land Ownership / Ration Card")
 
-    # ---------------- Final Report ----------------
     return {
         "scheme": scheme,
         "priority": priority,
@@ -44,6 +36,6 @@ def generate_recommendation_report(scheme_result):
         "urgency": deadline_risk["urgency"],
         "risk_level": deadline_risk["risk_level"],
         "warning": deadline_risk["warning"],
-        "estimated_loss": deadline_risk["estimated_loss"],
+        "estimated_loss": deadline_risk.get("estimated_loss", "Low risk"),
         "required_documents": documents
     }

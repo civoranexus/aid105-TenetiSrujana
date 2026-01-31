@@ -1,3 +1,5 @@
+st.write("🚀 New build loaded at", datetime.now())
+
 import streamlit as st
 import pandas as pd
 from datetime import datetime
@@ -13,9 +15,12 @@ st.set_page_config(
 # ================= LOAD DATA =================
 @st.cache_data
 def load_data():
-    df = pd.read_csv("src/data/schemes_master.csv")
+    df = pd.read_csv("src/data/schemes_master.csv", encoding="utf-8-sig")
+    df.columns = df.columns.str.strip().str.lower()
     df["deadline"] = pd.to_datetime(df["deadline"])
     return df
+
+
 
 df = load_data()
 
@@ -79,24 +84,38 @@ if not st.session_state.logged_in:
     st.markdown("<br><br>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns([1,2,1])
     with c2:
-        st.markdown("<h2 style='text-align:center;color:#1e88e5;'>🔐 Welcome to <b>SchemeAssist AI</b></h2>", unsafe_allow_html=True)
+        st.markdown(
+            "<h2 style='text-align:center;color:#1e88e5;'>🔐 Welcome to <b>SchemeAssist AI</b></h2>",
+            unsafe_allow_html=True
+        )
+
         name = st.text_input("Full Name")
-        age = st.number_input("Age",10,100,value=None,placeholder="Enter your age")
-        income = st.number_input("Annual Income ₹",0,500000,15000)
-        state = st.selectbox("State",["Select your state"]+sorted(df["scheme_state"].unique()))
-        category = st.selectbox("Category",sorted(df["category"].unique()))
-        _,b,_ = st.columns([2,1,2])
+        age = st.number_input("Age", 10, 100, value=None, placeholder="Enter your age")
+        income = st.number_input("Annual Income ₹", 0, 500000, 15000)
+
+        state = st.selectbox(
+            "State",
+            ["Select your state"] + sorted(df["scheme_state"].unique())
+        )
+
+        category = st.selectbox(
+            "Category",
+            sorted(df["category"].unique())
+        )
+
+        _, b, _ = st.columns([2,1,2])
         with b:
             if st.button("🚀 Enter Dashboard"):
                 st.session_state.user = {
-                    "name":name,
-                    "age":age,
-                    "income":income,
-                    "state":state,
-                    "category":category
+                    "name": name,
+                    "age": age,
+                    "income": income,
+                    "state": state,
+                    "category": category
                 }
                 st.session_state.logged_in = True
                 st.rerun()
+
     st.stop()
 
 u = st.session_state.user
@@ -112,45 +131,58 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # FILTERS
-f1,f2,f3,f4 = st.columns([2,2,2,1])
-income = f1.number_input("Income ₹",0,500000,u["income"])
-state = f2.selectbox("State",["ALL"]+sorted(df["scheme_state"].unique()))
-category = f3.selectbox("Category",sorted(df["category"].unique()))
+f1, f2, f3, f4 = st.columns([2,2,2,1])
+income = f1.number_input("Income ₹", 0, 500000, u["income"])
+state = f2.selectbox("State", ["ALL"] + sorted(df["scheme_state"].unique()))
+category = f3.selectbox("Category", sorted(df["category"].unique()))
 f4.button("🔍 Find Schemes")
 
 filtered = df[
-    (df["min_income"]<=income)&
-    (df["max_income"]>=income)&
-    ((df["scheme_state"]==state)|(df["scheme_state"]=="ALL")|(state=="ALL"))&
-    (df["category"]==category)
+    (df["min_income"] <= income) &
+    (df["max_income"] >= income) &
+    (
+        (df["scheme_state"] == state) |
+        (df["scheme_state"] == "ALL") |
+        (state == "ALL")
+    ) &
+    (df["category"] == category)
 ]
 
 # SMART SORT (AI Ranking)
 filtered = filtered.sort_values(
-    by=["deadline","estimated_benefit"],
-    ascending=[True,False]
+    by=["deadline", "estimated_benefit"],
+    ascending=[True, False]
 )
 
 # STATS
-s1,s2,s3 = st.columns(3)
-s1.markdown(f"<div class='stat-box'><h1>{len(filtered)}</h1><p>Total Schemes</p></div>",unsafe_allow_html=True)
-s2.markdown(f"<div class='stat-box'><h1>{category}</h1><p>Category</p></div>",unsafe_allow_html=True)
-s3.markdown(f"<div class='stat-box'><h1>{state}</h1><p>State</p></div>",unsafe_allow_html=True)
+s1, s2, s3 = st.columns(3)
+s1.markdown(
+    f"<div class='stat-box'><h1>{len(filtered)}</h1><p>Total Schemes</p></div>",
+    unsafe_allow_html=True
+)
+s2.markdown(
+    f"<div class='stat-box'><h1>{category}</h1><p>Category</p></div>",
+    unsafe_allow_html=True
+)
+s3.markdown(
+    f"<div class='stat-box'><h1>{state}</h1><p>State</p></div>",
+    unsafe_allow_html=True
+)
 
 st.markdown("## 🎯 Recommended Schemes")
 
-for idx,s in filtered.iterrows():
-    days = (s["deadline"]-datetime.now()).days
-    urgency = "HIGH" if days<30 else "MEDIUM" if days<60 else "LOW"
-    score = random.randint(85,98)
+for idx, s in filtered.iterrows():
+    days = (s["deadline"] - datetime.now()).days
+    urgency = "HIGH" if days < 30 else "MEDIUM" if days < 60 else "LOW"
+    score = random.randint(85, 98)
 
     st.markdown(f"### 🏷️ {s['scheme_name']}")
 
-    c1,c2,c3,c4 = st.columns(4)
-    c1.metric("Benefit",f"₹{int(s['estimated_benefit']):,}")
-    c2.metric("Urgency",urgency)
-    c3.metric("Deadline",s["deadline"].strftime("%d %b %Y"))
-    c4.metric("Approval Confidence",f"{score}%")
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Benefit", f"₹{int(s['estimated_benefit']):,}")
+    c2.metric("Urgency", urgency)
+    c3.metric("Deadline", s["deadline"].strftime("%d %b %Y"))
+    c4.metric("Approval Confidence", f"{score}%")
 
     st.progress(score)
 
@@ -166,18 +198,18 @@ for idx,s in filtered.iterrows():
 
     # DOCUMENT READINESS
     st.markdown("📋 **Document Readiness**")
-    a = st.checkbox("Aadhaar Card",key=f"a{idx}")
-    i = st.checkbox("Income Certificate",key=f"i{idx}")
-    b = st.checkbox("Bank Passbook",key=f"b{idx}")
+    a = st.checkbox("Aadhaar Card", key=f"a{idx}")
+    i = st.checkbox("Income Certificate", key=f"i{idx}")
+    b = st.checkbox("Bank Passbook", key=f"b{idx}")
 
-    ready = sum([a,i,b])
-    st.progress(ready/3)
+    ready = sum([a, i, b])
+    st.progress(ready / 3)
     st.caption(f"Readiness: {ready}/3 documents")
 
-    if urgency=="HIGH" and ready<2:
+    if urgency == "HIGH" and ready < 2:
         st.error("⚠ Low readiness for urgent scheme")
 
-    if st.button("🔔 Set Reminder",key=f"r{idx}"):
+    if st.button("🔔 Set Reminder", key=f"r{idx}"):
         st.toast("Reminder saved ⏰")
 
     st.markdown("---")
@@ -188,10 +220,10 @@ st.markdown("</div>", unsafe_allow_html=True)
 st.markdown("<div class='frame-alt'>", unsafe_allow_html=True)
 st.markdown("## 🪜 How It Works")
 
-h1,h2,h3 = st.columns(3)
-h1.markdown("<div class='flow'><h3>👤 Step 1</h3><p>Enter your details</p></div>",unsafe_allow_html=True)
-h2.markdown("<div class='flow'><h3>🧠 Step 2</h3><p>AI evaluates eligibility</p></div>",unsafe_allow_html=True)
-h3.markdown("<div class='flow'><h3>🚀 Step 3</h3><p>Apply with confidence</p></div>",unsafe_allow_html=True)
+h1, h2, h3 = st.columns(3)
+h1.markdown("<div class='flow'><h3>👤 Step 1</h3><p>Enter your details</p></div>", unsafe_allow_html=True)
+h2.markdown("<div class='flow'><h3>🧠 Step 2</h3><p>AI evaluates eligibility</p></div>", unsafe_allow_html=True)
+h3.markdown("<div class='flow'><h3>🚀 Step 3</h3><p>Apply with confidence</p></div>", unsafe_allow_html=True)
 
 st.markdown("</div>", unsafe_allow_html=True)
 
@@ -199,11 +231,11 @@ st.markdown("</div>", unsafe_allow_html=True)
 st.markdown("<div class='frame'>", unsafe_allow_html=True)
 st.markdown("## 📊 Insights & Analytics")
 
-c1,c2 = st.columns(2)
+c1, c2 = st.columns(2)
 with c1:
     urgency_data = filtered["deadline"].apply(
-        lambda d: "HIGH" if (d-datetime.now()).days<30 else
-                  "MEDIUM" if (d-datetime.now()).days<60 else "LOW"
+        lambda d: "HIGH" if (d - datetime.now()).days < 30 else
+                  "MEDIUM" if (d - datetime.now()).days < 60 else "LOW"
     ).value_counts()
     st.bar_chart(urgency_data)
 
@@ -230,4 +262,4 @@ with st.expander("Is my data stored?"):
 st.markdown("</div>", unsafe_allow_html=True)
 
 # ================= FOOTER =================
-st.markdown("<br><center>© 2026 SchemeAssist AI</center>",unsafe_allow_html=True)
+st.markdown("<br><center>© 2026 SchemeAssist AI</center>", unsafe_allow_html=True)
