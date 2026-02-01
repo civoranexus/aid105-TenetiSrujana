@@ -1,4 +1,4 @@
-scheme_id,scheme_name,scheme_state,min_income,max_income,category,estimated_benefit,deadline,priority_weight
+scheme_id,scheme_name,state,min_income,max_income,category,estimated_benefit,deadline,priority_weight
 S001,PM Scholarship Scheme,ALL,0,80000,Student,50000,2026-01-20,9
 S002,Minority Student Scholarship,ALL,0,60000,Student,40000,2026-02-15,8
 S003,Post Matric SC ST Scholarship,ALL,0,250000,Student,48000,2026-03-10,7
