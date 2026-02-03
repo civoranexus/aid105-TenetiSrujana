@@ -183,13 +183,13 @@ for idx, s in filtered.iterrows():
 
     st.markdown("---")
 
-st.markdown("</div>", unsafe_allow_html=True)
-
 # ================= SAVED =================
 if st.session_state.reminders:
     st.markdown("## 📌 Saved Schemes")
     for sc in set(st.session_state.reminders):
         st.write("•", sc)
+        
+        st.markdown("---")
 
 # ================= HOW IT WORKS =================
 st.markdown("<div class='frame-alt'>", unsafe_allow_html=True)
@@ -198,76 +198,92 @@ c1, c2, c3 = st.columns(3)
 c1.markdown("<div class='flow'>👤 Enter details</div>", unsafe_allow_html=True)
 c2.markdown("<div class='flow'>🧠 AI evaluates</div>", unsafe_allow_html=True)
 c3.markdown("<div class='flow'>🚀 Apply smart</div>", unsafe_allow_html=True)
-st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("---")
 
 # ================= INSIGHTS =================
 st.markdown("<div class='frame'>", unsafe_allow_html=True)
 st.markdown("## 📊 Insights & Analytics")
 
-# ---------- 1️⃣ Urgency Breakdown ----------
-st.markdown("### ⏰ Scheme Urgency Distribution")
+if filtered.empty:
+    st.warning("No data available for insights.")
+else:
+    # ---------- PREP DATA ----------
+    filtered["days_left"] = filtered["deadline"].apply(
+        lambda d: (d - datetime.now()).days
+    )
 
-filtered["urgency_level"] = filtered["deadline"].apply(
-    lambda d: "High Urgency (<30 days)" if (d - datetime.now()).days < 30
-    else "Medium Urgency (30–60 days)" if (d - datetime.now()).days < 60
-    else "Low Urgency (>60 days)"
-)
+    filtered["urgency"] = filtered["days_left"].apply(
+        lambda d: "High" if d < 30 else "Medium" if d < 60 else "Low"
+    )
 
-urgency_counts = filtered["urgency_level"].value_counts()
+    high = (filtered["urgency"] == "High").sum()
+    med = (filtered["urgency"] == "Medium").sum()
+    low = (filtered["urgency"] == "Low").sum()
 
-st.bar_chart(urgency_counts)
+    max_benefit = int(filtered["estimated_benefit"].max())
+    avg_benefit = int(filtered["estimated_benefit"].mean())
 
-st.caption(
-    "🧠 **AI Insight:** High-urgency schemes should be prioritized to avoid missing financial benefits."
-)
+    # ---------- SUMMARY CARDS ----------
+    st.markdown("### 🤖 AI Summary Snapshot")
 
-st.markdown("---")
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("High Urgency", high, help="Deadlines < 30 days")
+    c2.metric("Medium Urgency", med)
+    c3.metric("Low Urgency", low)
+    c4.metric("Max Benefit (₹)", f"{max_benefit:,}")
 
-# ---------- 2️⃣ Benefit Comparison ----------
-st.markdown("### 💰 Estimated Benefit Comparison")
+    st.markdown("---")
 
-benefit_df = (
-    filtered[["scheme_name", "estimated_benefit"]]
-    .sort_values(by="estimated_benefit", ascending=False)
-    .set_index("scheme_name")
-)
+    # ---------- VISUAL INSIGHTS ----------
+    st.markdown("### 🔍 What AI Observes")
 
-st.bar_chart(benefit_df)
+    v1, v2 = st.columns(2)
 
-st.caption(
-    "📈 **AI Insight:** Schemes with higher benefits often have stricter deadlines and documentation requirements."
-)
+    with v1:
+        st.markdown("#### ⏰ Urgency Distribution")
+        st.progress(min(high / max(len(filtered), 1), 1.0))
+        st.caption(f"🔴 {high} high-urgency scheme(s) need immediate attention")
 
-st.markdown("---")
+        st.progress(min((high + med) / max(len(filtered), 1), 1.0))
+        st.caption(f"🟠 {med} medium-urgency scheme(s) coming up")
 
-# ---------- 3️⃣ Smart Summary Cards ----------
-st.markdown("### 🤖 AI Summary")
+        st.progress(min((high + med + low) / max(len(filtered), 1), 1.0))
+        st.caption(f"🟢 {low} low-urgency scheme(s) are flexible")
 
-c1, c2, c3 = st.columns(3)
+    with v2:
+        st.markdown("#### 💰 Benefit Spread")
+        st.metric("Average Benefit", f"₹{avg_benefit:,}")
+        st.metric("Top Benefit", f"₹{max_benefit:,}")
 
-c1.metric(
-    "High Urgency Schemes",
-    urgency_counts.get("High Urgency (<30 days)", 0),
-    help="Schemes closing within 30 days"
-)
+        top_scheme = filtered.sort_values(
+            by="estimated_benefit", ascending=False
+        ).iloc[0]
 
-c2.metric(
-    "Max Benefit (₹)",
-    f"{int(filtered['estimated_benefit'].max()):,}",
-    help="Highest financial benefit available"
-)
+        st.info(
+            f"🏆 **Highest Benefit Scheme:** {top_scheme['scheme_name']} "
+            f"(₹{int(top_scheme['estimated_benefit']):,})"
+        )
 
-c3.metric(
-    "Avg Benefit (₹)",
-    f"{int(filtered['estimated_benefit'].mean()):,}",
-    help="Average benefit across eligible schemes"
-)
+    st.markdown("---")
 
-st.info(
-    "✨ **AI Recommendation:** Focus first on high-urgency schemes with above-average benefits and ensure documents are ready."
-)
+    # ---------- AI RECOMMENDATION ----------
+    st.markdown("### ✨ AI Recommendation")
 
-st.markdown("</div>", unsafe_allow_html=True)
+    if high > 0:
+        st.success(
+            "⚡ **Apply immediately** to high-urgency schemes. "
+            "Ensure documents are ready to avoid last-minute rejection."
+        )
+    else:
+        st.info(
+            "✅ No immediate deadline pressure. "
+            "You can plan applications strategically."
+        )
+
+    st.caption(
+        "🧠 AI combines deadline proximity, benefit value, and eligibility to guide decisions."
+    )
+    st.markdown("---")
 
 # ================= FRAME : FAQ =================
 st.markdown("<div class='frame-alt'>", unsafe_allow_html=True)
@@ -314,8 +330,6 @@ with st.expander("Can scheme results change later?"):
     st.write(
         "Yes. Scheme availability and eligibility can change based on government updates, deadlines, or income/category changes."
     )
-
-st.markdown("</div>", unsafe_allow_html=True)
 
 # ================= FOOTER =================
 st.markdown("<br><center>© 2026 SchemeAssist AI</center>", unsafe_allow_html=True)
