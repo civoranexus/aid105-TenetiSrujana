@@ -52,7 +52,6 @@ text-align:center;box-shadow:0 8px 25px rgba(0,0,0,0.08);}
 
 # ================= LOGIN =================
 if not st.session_state.logged_in:
-    st.markdown("<br><br>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns([1,2,1])
     with c2:
         st.markdown(
@@ -83,7 +82,6 @@ if not st.session_state.logged_in:
 u = st.session_state.user
 
 # ================= DASHBOARD =================
-st.markdown("<div class='frame'>", unsafe_allow_html=True)
 
 st.markdown(f"""
 <div class="hero">
@@ -192,7 +190,6 @@ if st.session_state.reminders:
         st.markdown("---")
 
 # ================= HOW IT WORKS =================
-st.markdown("<div class='frame-alt'>", unsafe_allow_html=True)
 st.markdown("## 🪜 How It Works")
 c1, c2, c3 = st.columns(3)
 c1.markdown("<div class='flow'>👤 Enter details</div>", unsafe_allow_html=True)
@@ -201,7 +198,6 @@ c3.markdown("<div class='flow'>🚀 Apply smart</div>", unsafe_allow_html=True)
 st.markdown("---")
 
 # ================= INSIGHTS =================
-st.markdown("<div class='frame'>", unsafe_allow_html=True)
 st.markdown("## 📊 Insights & Analytics")
 
 if filtered.empty:
@@ -286,7 +282,6 @@ else:
     st.markdown("---")
 
 # ================= FRAME : FAQ =================
-st.markdown("<div class='frame-alt'>", unsafe_allow_html=True)
 st.markdown("## ❓ Frequently Asked Questions")
 
 with st.expander("Is this an official government website?"):
