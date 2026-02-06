@@ -117,12 +117,36 @@ state = f2.selectbox("State", ["ALL"] + sorted(df["state"].unique()))
 category = f3.selectbox("Category", sorted(df["category"].unique()))
 f4.button("🔍 Find Schemes")
 
+# ✅ NEW : Search + Sort
+search_text = st.text_input("🔍 Search Scheme by Name")
+
+sort_option = st.selectbox(
+    "Sort Schemes By",
+    ["Deadline", "Benefit (High to Low)", "Benefit (Low to High)"]
+)
+
 filtered = df[
     (df["min_income"] <= income) &
     (df["max_income"] >= income) &
     ((df["state"] == state) | (df["state"] == "ALL") | (state == "ALL")) &
     (df["category"] == category)
-].sort_values(by=["deadline", "estimated_benefit"], ascending=[True, False])
+]
+
+# ✅ Apply Search
+if search_text:
+    filtered = filtered[
+        filtered["scheme_name"].str.contains(search_text, case=False)
+    ]
+
+# ✅ Apply Sorting
+if sort_option == "Deadline":
+    filtered = filtered.sort_values(by="deadline")
+
+elif sort_option == "Benefit (High to Low)":
+    filtered = filtered.sort_values(by="estimated_benefit", ascending=False)
+
+elif sort_option == "Benefit (Low to High)":
+    filtered = filtered.sort_values(by="estimated_benefit", ascending=True)
 
 # ================= STATS =================
 s1, s2, s3 = st.columns(3)
