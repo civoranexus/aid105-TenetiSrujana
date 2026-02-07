@@ -111,6 +111,19 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+# ✅ NEW: Personalized Greeting + Last Updated Time
+current_hour = datetime.now().hour
+
+if current_hour < 12:
+    greeting = "🌅 Good Morning"
+elif current_hour < 17:
+    greeting = "🌤️ Good Afternoon"
+else:
+    greeting = "🌙 Good Evening"
+
+st.info(f"{greeting}, {u['name']}! | Last Updated: {datetime.now().strftime('%d %b %Y %I:%M %p')}")
+
+
 f1, f2, f3, f4 = st.columns([2,2,2,1])
 income = f1.number_input("Income ₹", 0, 500000, u["income"])
 state = f2.selectbox("State", ["ALL"] + sorted(df["state"].unique()))
