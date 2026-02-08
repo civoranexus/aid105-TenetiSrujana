@@ -123,12 +123,19 @@ else:
 
 st.info(f"{greeting}, {u['name']}! | Last Updated: {datetime.now().strftime('%d %b %Y %I:%M %p')}")
 
-
 f1, f2, f3, f4 = st.columns([2,2,2,1])
 income = f1.number_input("Income ₹", 0, 500000, u["income"])
 state = f2.selectbox("State", ["ALL"] + sorted(df["state"].unique()))
 category = f3.selectbox("Category", sorted(df["category"].unique()))
 f4.button("🔍 Find Schemes")
+
+# ✅ NEW: Reset Filters Button
+if st.button("♻ Reset Filters"):
+    st.session_state.user["income"] = 15000
+    st.session_state.user["state"] = "ALL"
+    st.session_state.user["category"] = df["category"].unique()[0]
+    st.rerun()
+
 
 # ✅ NEW : Search + Sort
 search_text = st.text_input("🔍 Search Scheme by Name")
