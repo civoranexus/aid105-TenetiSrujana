@@ -1,0 +1,15 @@
+scheme_id,scheme_name,state,min_income,max_income,category,estimated_benefit,deadline,priority_weight
+S001,PM Scholarship Scheme,ALL,0,80000,Student,50000,2026-01-20,9
+S002,Minority Student Scholarship,ALL,0,60000,Student,40000,2026-02-15,8
+S003,Post Matric SC ST Scholarship,ALL,0,250000,Student,48000,2026-03-10,7
+S004,Telangana Post Matric Scholarship,Telangana,0,200000,Student,25000,2026-01-18,9
+S005,AP Post Matric Scholarship,Andhra Pradesh,0,150000,Student,30000,2026-02-05,8
+S006,Karnataka Vidyasiri Scheme,Karnataka,0,120000,Student,20000,2026-01-30,7
+S007,PM Ujjwala Yojana,ALL,0,150000,Women,1600,2026-06-30,6
+S008,Telangana Kalyana Lakshmi,Telangana,0,200000,Women,100000,2026-01-15,9
+S009,AP Amma Vodi,Andhra Pradesh,0,130000,Women,15000,2026-03-01,8
+S010,PM Kisan Samman Nidhi,ALL,0,200000,Farmer,6000,2026-02-28,7
+S011,Rythu Bandhu,Telangana,0,300000,Farmer,10000,2026-04-15,8
+S012,PM Mudra Loan Shishu,ALL,0,200000,Self-Employed,500000,2026-03-31,8
+S013,PM Mudra Loan Kishore,ALL,200000,500000,Self-Employed,1000000,2026-03-31,7
+S014,Aasara Pension Scheme,Telangana,0,150000,Senior Citizen,2016,2026-01-25,9
